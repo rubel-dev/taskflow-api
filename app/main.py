@@ -1,4 +1,7 @@
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
+from sqlalchemy.orm import Session
+
+from app.dependencies import get_db
 
 app = FastAPI(
     title = 'TaskFlow API',
@@ -9,9 +12,8 @@ app = FastAPI(
 
 
 @app.get('/')
-def hello():
-    return {"message":"hello world"}
-
+def root(db:Session = Depends(get_db)):
+    return {"message":"working well"}
 @app.get('/health')
 def health_check():
     return {"status":"ok"}
