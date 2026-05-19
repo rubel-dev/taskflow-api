@@ -1,19 +1,11 @@
-from fastapi import Depends, FastAPI
-from sqlalchemy.orm import Session
-
+from fastapi import FastAPI, Depends
 from app.dependencies import get_db
+from app.database import SessionLocal
 
-app = FastAPI(
-    title = 'TaskFlow API',
-    description='A real-world task management backend',
-    version = '1.0.0'
-)
-
-
-
+app = FastAPI()
 @app.get('/')
-def root(db:Session = Depends(get_db)):
-    return {"message":"working well"}
-@app.get('/health')
-def health_check():
-    return {"status":"ok"}
+def home():
+    return{"message":"api is working"}
+@app.get('/home')
+def getHome(db:SessionLocal= Depends(get_db)):
+    return {"hello my dear"}
