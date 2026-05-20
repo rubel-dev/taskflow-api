@@ -8,4 +8,4 @@ def home():
     return{"message":"api is working"}
 @app.get('/home')
 def getHome(db:SessionLocal= Depends(get_db)):
-    return {"hello my dear"}
+    return {"all things is working well"}
