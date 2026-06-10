@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>TaskFlow</title>
+</head>
+<body>
+  <h1>TaskFlow Todo</h1>
+   <h2>Register</h2>
+    <input id="regUsername" placeholder="Username">
+    <input id="regEmail" placeholder="Email">
+    <input id="regPassword" placeholder="Password" type="password">
+    <button onclick="register()">Register</button>
+
+  <h2>Login</h2>
+  <input id="email" placeholder="Email">
+  <input id="password" placeholder="Password" type="password">
+  <button onclick="login()">Login</button>
+    
+  <h2>Create Task</h2>
+  <input id="title" placeholder="Task title">
+  <input id="description" placeholder="Description">
+  <button onclick="createTask()">Create</button>
+
+  <h2>My Tasks</h2>
+  <button onclick="getTasks()">Load Tasks</button>
+  <ul id="taskList"></ul>
+
+  <script>
+    const API_URL = "http://127.0.0.1:8000";
+    let token = "";
+    async function register() {
+    const res = await fetch(`${API_URL}/register`, {
+        method: "POST",
+        headers: {
+        "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+        username: document.getElementById("regUsername").value,
+        email: document.getElementById("regEmail").value,
+        password: document.getElementById("regPassword").value
+        })
+    });
+
+    const data = await res.json();
+    console.log(data);
+
+    alert("Register done. Now login.");
+    }
+    
+    async function login() {
+      const res = await fetch(`${API_URL}/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          email: document.getElementById("email").value,
+          password: document.getElementById("password").value
+        })
+      });
+
+      const data = await res.json();
+      token = data.access_token;
+
+      alert("Login success. Token saved.");
+    }
+
+    async function createTask() {
+      const res = await fetch(`${API_URL}/tasks`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          title: document.getElementById("title").value,
+          description: document.getElementById("description").value
+        })
+      });
+
+      const data = await res.json();
+      console.log(data);
+      getTasks();
+    }
+
+    async function getTasks() {
+      const res = await fetch(`${API_URL}/tasks`, {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
+
+      const tasks = await res.json();
+
+      const list = document.getElementById("taskList");
+      list.innerHTML = "";
+
+      tasks.forEach(task => {
+        const li = document.createElement("li");
+        li.innerText = `${task.title} - ${task.completed}`;
+        list.appendChild(li);
+      });
+    }
+  </script>
+</body>
+</html>

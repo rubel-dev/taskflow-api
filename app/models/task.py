@@ -1,5 +1,5 @@
 
-from sqlalchemy import Boolean, Column, Integer, String
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
 
 from app.database import Base
 
@@ -10,5 +10,9 @@ class Task(Base):
     title = Column(String, nullable=False)
     description = Column(String)
     completed = Column(Boolean, default=False)
+    user_id = Column(
+        Integer,
+        ForeignKey("users.id")
+    )
 
     
