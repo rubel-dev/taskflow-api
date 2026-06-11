@@ -4,6 +4,7 @@ from app.auth.dependencies import get_current_user
 from app.dependencies import get_db
 from app.models.task import Task
 from app.schemas.task import TaskCreate, TaskUpdate, TaskResponse
+from app.services import task_service
 
 router = APIRouter()
 
@@ -14,18 +15,12 @@ def create_task(
     user_id:int = Depends(get_current_user)
     
     ):
-
-    new_task = Task(
-        title = task.title,
-        description = task.description,
-        user_id = user_id
+ 
+    return task_service.create_task(
+        task=task,
+        user_id=user_id,
+        db=db
     )
-    db.add(new_task)
-    db.commit()
-    db.refresh(new_task)
-    
-
-    return new_task
 
 @router.get('/tasks', response_model=list[TaskResponse], status_code=200)
 def get_tasks(

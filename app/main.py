@@ -19,7 +19,7 @@ app.add_middleware(
 )
 app.include_router(task_router)
 app.include_router(user_router)
-Base.metadata.create_all(bind = engine)
+ 
 @app.get('/')
 def root():
     return {"message":"python backend is working"}

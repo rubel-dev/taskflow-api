@@ -1,9 +1,9 @@
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
+from app.core.settings import DATABASE_URL
 
 
-DATABASE_URL = "postgresql://postgres:12345@localhost/taskflow_db"
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(
     autocommit = False,

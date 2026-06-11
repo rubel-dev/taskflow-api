@@ -2,12 +2,13 @@ from passlib.context import CryptContext
 from jose import jwt
 from datetime import UTC, datetime, timedelta
 
+from app.core.settings import ALGORITHM, SECRET_KEY
 
 
 
 
-SECRET_KEY = "supersecretkey"
-ALGORITHM = 'HS256'
+
+ 
 def create_access_token(data:dict):
     to_encode = data.copy()
     expire = datetime.now(UTC) + timedelta(hours = 1)
