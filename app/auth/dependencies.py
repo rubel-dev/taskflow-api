@@ -2,18 +2,16 @@
 
 
 from fastapi import Depends, HTTPException
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 from app.core.security import ALGORITHM, SECRET_KEY
 from jose import JWTError, jwt
 
-oauth2_scheme = OAuth2PasswordBearer(
-    tokenUrl = 'login'
-)
-
+security = HTTPBearer()
 def get_current_user(
-        token: str = Depends(oauth2_scheme)
+        credentials: HTTPAuthorizationCredentials = Depends(security)
 ):
+    token = credentials.credentials
     try:
         payload = jwt.decode(
             token,
