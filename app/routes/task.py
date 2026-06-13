@@ -31,13 +31,15 @@ def get_tasks(
     db:Session = Depends(get_db),
     user_id:int = Depends(get_current_user)
 ):
-    query = db.query(Task).filter(Task.user_id == user_id)
-    if completed is not None:
-        query.filter(Task.completed == completed)
-    if search is not None:
-        query.filter(Task.title.ilike(f"%{search}%"))
-    query.offset(skip).limit(limit)
-    return query.all()
+    return task_service.get_tasks(
+        completed=completed,
+        search=search,
+        skip=skip,
+        limit=limit,
+        db=db,
+        user_id=user_id
+    )
+    
 
 
 
@@ -47,16 +49,14 @@ def get_task(
     db:Session = Depends(get_db),
     user_id:int = Depends(get_current_user)
 ):
-    task = db.query(Task).filter(
-        Task.id == task_id,
-        Task.user_id == user_id
-        ).first()
-    if not task:
-        raise HTTPException(
-            status_code=404,
-            detail='task is not found'
-        )
-    return task
+    return task_service.get_task(
+        task_id = task_id,
+        user_id = user_id,
+        db = db
+    )
+
+
+   
 
 
 
@@ -66,18 +66,13 @@ def delete_task(
     db:Session = Depends(get_db),
     user_id:int = Depends(get_current_user)
 ):
-    task = db.query(Task).filter(
-        Task.id == task_id,
-        Task.user_id == user_id
-        ).first()
-    if not task:
-        raise HTTPException(
-            status_code = 404,
-            detail = 'task is not found'
-        )
-    db.delete(task)
-    db.commit()
-    return {"message":"Task Deleted"}
+    return task_service.delete_task(
+        task_id=task_id,
+        user_id=user_id,
+        db=db
+    )
+    
+
 
 @router.put('/tasks/{task_id}', response_model= TaskResponse)
 def update_task(
@@ -86,18 +81,9 @@ def update_task(
     db:Session = Depends(get_db),
     user_id:int = Depends(get_current_user)
 ):
-    task = db.query(Task).filter(
-        Task.id == task_id,
-        Task.user_id == user_id
-        ).first()
-    if not task:
-        raise HTTPException(
-            status_code=404,
-            detail="Task Not Found"
-        )
-    task.title = task_update.title
-    task.description = task_update.description
-    task.completed = task_update.completed
-    db.commit()
-    db.refresh(task)
-    return task
+    return task_service.update_task(
+        task_id=task_id,
+        task_update=task_update,
+        user_id=user_id,
+        db=db
+    )
